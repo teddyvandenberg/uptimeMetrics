@@ -27,6 +27,9 @@ kernBootTime=`/usr/sbin/sysctl kern.boottime | awk '{ print $5 }' | sed s/,//`
 	# get load averages
 vmLoadAvg=`/usr/sbin/sysctl vm.loadavg | awk '{ print $3,$4,$5 }'`
 vmLoadAvg="'"$vmLoadAvg"'"
+	# grab the default gateway
+gateway=`/usr/sbin/netstat -rn -f inet | grep default | awk '{ print $2 }'`
+gateway="'"$gateway"'"
 	# get calculation of number of hours booted
 uptimeHrs=$(expr $curTime - $kernBootTime)
 uptimeHrs=$(expr $uptimeHrs / 60)
@@ -82,13 +85,15 @@ CREATE TABLE IF NOT EXISTS bw (id INTEGER PRIMARY KEY,
 				mem2 STRING,
 				mem3 STRING,
 				mem4 STRING,
-				mem5 STRING);
+				mem5 STRING,
+				gatewqy STRING);
 INSERT INTO bw (temp, 
 		boottime,
 		curtime,
 		uptimehrs,
 		mbpsdl,
 		load,
+		gateway,
 		cpu1,
 		cpu2,
 		cpu3,
@@ -104,6 +109,7 @@ INSERT INTO bw (temp,
 		$curTime,
 		$uptimeHrs,
 		$mbpsDl,
-		$vmLoadAvg
+		$vmLoadAvg,
+		$gateway
 		$processDB);
 EOF
